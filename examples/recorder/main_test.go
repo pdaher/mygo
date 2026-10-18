@@ -108,3 +108,20 @@ func TestPeaks(t *testing.T) {
 		t.Errorf("clock = %q", got)
 	}
 }
+
+// A chunk coming after Stop, which doesn't wait for one under way, leaves
+// the take that plays as it was.
+func TestChunkAfterStop(t *testing.T) {
+	push := fakeRecord(t)
+	r := &recorder{}
+	tt := ui.NewTester(r.view, 520, 340)
+	tt.Click("Record")
+	tt.Frame()
+	(*push)(make([]float32, 4800), nil)
+	tt.Key(0, ui.KeyR)
+	tt.Frame()
+	(*push)(make([]float32, 4800), nil)
+	if d := r.player.Duration(); d != 100*time.Millisecond {
+		t.Errorf("the take plays %v, want 100ms", d)
+	}
+}

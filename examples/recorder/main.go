@@ -83,9 +83,10 @@ func (r *recorder) stopRecording() {
 	r.rec = nil
 	samples, _ := r.take.snapshot()
 	if len(samples) > 0 {
-		// NewSound keeps the samples: a copy, as the recording's
-		// goroutine may append one more chunk.
-		r.player = audio.NewSound(rate, 1, append([]float32(nil), samples...)).NewPlayer()
+		// The sound shares the take's samples: a chunk the recording's
+		// goroutine may still append goes past them, or into a new array,
+		// and changes none the sound plays.
+		r.player = audio.NewSound(rate, 1, samples).NewPlayer()
 	}
 }
 
