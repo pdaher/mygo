@@ -181,5 +181,9 @@
   "clipboardRead": "A program wants to read the clipboard",
   "clipboardReadAllow": "Allow",
   "clipboardReadDeny": "Deny",
-  "clipboardReadEmpty": "The clipboard is empty."
+  "clipboardReadEmpty": "The clipboard is empty.",
+  "startDictation": "Start dictation",
+  "stopDictation": "Stop dictation",
+  "finishingDictation": "Finishing dictation",
+  "dictationUnavailable": "Dictation unavailable"
 }

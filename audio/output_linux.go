@@ -25,6 +25,7 @@ var (
 
 	paSimpleNew   func(server, name *byte, dir int32, dev, stream *byte, spec *paSampleSpec, chmap, attr unsafe.Pointer, err *int32) uintptr
 	paSimpleWrite func(s uintptr, data unsafe.Pointer, bytes uintptr, err *int32) int32
+	paSimpleRead  func(s uintptr, data unsafe.Pointer, bytes uintptr, err *int32) int32
 	paSimpleFree  func(s uintptr)
 	paStrerror    func(err int32) string
 
@@ -34,6 +35,7 @@ var (
 	sndPcmOpen      func(pcm *uintptr, name *byte, stream int32, mode int32) int32
 	sndPcmSetParams func(pcm uintptr, format, access int32, channels, rate uint32, softResample int32, latency uint32) int32
 	sndPcmWritei    func(pcm uintptr, buf unsafe.Pointer, frames uintptr) int
+	sndPcmReadi     func(pcm uintptr, buf unsafe.Pointer, frames uintptr) int
 	sndPcmRecover   func(pcm uintptr, err int32, silent int32) int32
 	sndPcmClose     func(pcm uintptr) int32
 	sndStrerror     func(err int32) string
@@ -84,7 +86,8 @@ func openDevice() (device, int, error) {
 
 type pulseDevice struct{ s uintptr }
 
-func openPulse() (device, error) {
+// loadPulse loads PulseAudio's simple API, for playing and recording.
+func loadPulse() error {
 	pulseLoad.Do(func() {
 		lib, err := purego.Dlopen("libpulse-simple.so.0", purego.RTLD_NOW|purego.RTLD_GLOBAL)
 		if err != nil {
@@ -93,11 +96,16 @@ func openPulse() (device, error) {
 		}
 		purego.RegisterLibFunc(&paSimpleNew, lib, "pa_simple_new")
 		purego.RegisterLibFunc(&paSimpleWrite, lib, "pa_simple_write")
+		purego.RegisterLibFunc(&paSimpleRead, lib, "pa_simple_read")
 		purego.RegisterLibFunc(&paSimpleFree, lib, "pa_simple_free")
 		purego.RegisterLibFunc(&paStrerror, lib, "pa_strerror")
 	})
-	if pulseErr != nil {
-		return nil, pulseErr
+	return pulseErr
+}
+
+func openPulse() (device, error) {
+	if err := loadPulse(); err != nil {
+		return nil, err
 	}
 	spec := paSampleSpec{format: paSampleFloat32LE, rate: sampleRate, channels: channels}
 	// About 40 ms ahead, asking for more every 10 ms.
@@ -130,7 +138,8 @@ func (d *pulseDevice) close() { paSimpleFree(d.s) }
 
 type alsaDevice struct{ pcm uintptr }
 
-func openALSA() (device, error) {
+// loadALSA loads ALSA, for playing and recording.
+func loadALSA() error {
 	alsaLoad.Do(func() {
 		lib, err := purego.Dlopen("libasound.so.2", purego.RTLD_NOW|purego.RTLD_GLOBAL)
 		if err != nil {
@@ -140,12 +149,17 @@ func openALSA() (device, error) {
 		purego.RegisterLibFunc(&sndPcmOpen, lib, "snd_pcm_open")
 		purego.RegisterLibFunc(&sndPcmSetParams, lib, "snd_pcm_set_params")
 		purego.RegisterLibFunc(&sndPcmWritei, lib, "snd_pcm_writei")
+		purego.RegisterLibFunc(&sndPcmReadi, lib, "snd_pcm_readi")
 		purego.RegisterLibFunc(&sndPcmRecover, lib, "snd_pcm_recover")
 		purego.RegisterLibFunc(&sndPcmClose, lib, "snd_pcm_close")
 		purego.RegisterLibFunc(&sndStrerror, lib, "snd_strerror")
 	})
-	if alsaErr != nil {
-		return nil, alsaErr
+	return alsaErr
+}
+
+func openALSA() (device, error) {
+	if err := loadALSA(); err != nil {
+		return nil, err
 	}
 	var pcm uintptr
 	if e := sndPcmOpen(&pcm, cstr("default"), sndPcmStreamPlayback, 0); e < 0 {

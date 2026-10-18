@@ -2677,3 +2677,67 @@ func ClipboardReadEmpty() string { return In(i18n.Locale()).ClipboardReadEmpty()
 func (msgs Messages) ClipboardReadEmpty() string {
 	return Catalog.Format(msgs.locale, "clipboardReadEmpty", nil)
 }
+
+// StartDictation says "Start dictation"
+// in the language the app shows.
+//
+// The tooltip and accessible name of the dictation button of native UI
+// while it is idle: a click starts recording speech to turn into text.
+func StartDictation() string { return In(i18n.Locale()).StartDictation() }
+
+// StartDictation says "Start dictation"
+// in the language of msgs.
+//
+// The tooltip and accessible name of the dictation button of native UI
+// while it is idle: a click starts recording speech to turn into text.
+func (msgs Messages) StartDictation() string {
+	return Catalog.Format(msgs.locale, "startDictation", nil)
+}
+
+// StopDictation says "Stop dictation"
+// in the language the app shows.
+//
+// The tooltip and accessible name of the dictation button while it records
+// speech: a click stops recording.
+func StopDictation() string { return In(i18n.Locale()).StopDictation() }
+
+// StopDictation says "Stop dictation"
+// in the language of msgs.
+//
+// The tooltip and accessible name of the dictation button while it records
+// speech: a click stops recording.
+func (msgs Messages) StopDictation() string {
+	return Catalog.Format(msgs.locale, "stopDictation", nil)
+}
+
+// FinishingDictation says "Finishing dictation"
+// in the language the app shows.
+//
+// The tooltip and accessible name of the dictation button after recording
+// stopped, while the speech service sends its last result.
+func FinishingDictation() string { return In(i18n.Locale()).FinishingDictation() }
+
+// FinishingDictation says "Finishing dictation"
+// in the language of msgs.
+//
+// The tooltip and accessible name of the dictation button after recording
+// stopped, while the speech service sends its last result.
+func (msgs Messages) FinishingDictation() string {
+	return Catalog.Format(msgs.locale, "finishingDictation", nil)
+}
+
+// DictationUnavailable says "Dictation unavailable"
+// in the language the app shows.
+//
+// The tooltip and accessible name of the dictation button, disabled, when
+// no speech service can turn speech into text.
+func DictationUnavailable() string { return In(i18n.Locale()).DictationUnavailable() }
+
+// DictationUnavailable says "Dictation unavailable"
+// in the language of msgs.
+//
+// The tooltip and accessible name of the dictation button, disabled, when
+// no speech service can turn speech into text.
+func (msgs Messages) DictationUnavailable() string {
+	return Catalog.Format(msgs.locale, "dictationUnavailable", nil)
+}

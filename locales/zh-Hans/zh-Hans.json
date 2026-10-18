@@ -182,5 +182,9 @@
   "clipboardRead": "某程序想要读取剪贴板",
   "clipboardReadAllow": "允许",
   "clipboardReadDeny": "拒绝",
-  "clipboardReadEmpty": "剪贴板中没有文本。"
+  "clipboardReadEmpty": "剪贴板中没有文本。",
+  "startDictation": "开始听写",
+  "stopDictation": "停止听写",
+  "finishingDictation": "正在完成听写",
+  "dictationUnavailable": "听写不可用"
 }

@@ -1,7 +1,8 @@
 # Audio
 
 Package `audio` plays sound from Go: effects decoded into memory, music
-streamed as it plays, and sound an app makes itself. It mixes everything
+streamed as it plays, and sound an app makes itself. It also records the
+microphone ([Recording](#recording)). It mixes everything
 playing in Go and sends it to the system's audio output, with no cgo, in
 apps of native UI or web pages, on every platform MyGo runs on, browsers
 included.
@@ -120,6 +121,48 @@ rates are resampled as they play.
 Where no output opens, as on a machine with no audio device, players still
 play on time, unheard, and `audio.Err` says why. Every function and method
 is safe to call from any goroutine.
+
+## Recording
+
+`audio.Record` records the system's default microphone, converted to the
+sample rate and the channels you ask for, and hands it to a function on a
+goroutine of its own, every 10 to 21 ms, until `Stop`:
+
+```go
+rec := audio.Record(16000, 1, func(samples []float32, err error) {
+	if err != nil {
+		log.Print(err) // no microphone, or it went: the recording ended
+		return
+	}
+	send(samples) // interleaved, in [-1, 1]; yours to keep
+})
+...
+rec.Stop()
+```
+
+The microphone captures mono at 48 kHz, filtered below the new Nyquist
+frequency and resampled when you ask for less, as speech services' 16 kHz.
+When the default microphone changes, or one that worked goes, the
+recording opens the default again; if none opens, the function gets the
+error once and the recording ends. `Stop` doesn't wait for a call under
+way, and may come from the function itself.
+
+| platform | input |
+|---|---|
+| macOS | an Audio Queue on the default input |
+| Linux | PulseAudio's simple API (which PipeWire serves as well), else ALSA's default device |
+| Windows | WASAPI in shared mode, opened again when the default input changes |
+| browsers | `getUserMedia` into an AudioWorklet, on https or localhost |
+
+The system may ask the user first. macOS ends an app that has no
+`NSMicrophoneUsageDescription` in its Info.plist, so add one to
+`macos.infoPlist` in `mygo.config.ts` (see [Windows](windows.md#permissions)).
+Until the user answers, the recording gets nothing. Windows records
+nothing while its privacy settings deny apps the microphone, and browsers
+ask for the page.
+
+For dictation, [package `ui/speech`](ui/speech.md) runs sessions on a
+recording, with a button and a waveform of native UI.
 
 [examples/piano](../examples/piano) is a piano of synthesized keys that
 plays from the pointer and the keyboard, with a sustain pedal, dampers that

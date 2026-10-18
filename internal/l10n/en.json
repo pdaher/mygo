@@ -872,5 +872,21 @@
   "clipboardReadEmpty": "The clipboard is empty.",
   "@clipboardReadEmpty": {
     "description": "What the terminal's clipboard prompt shows when the clipboard holds no text."
+  },
+  "startDictation": "Start dictation",
+  "@startDictation": {
+    "description": "The tooltip and accessible name of the dictation button of native UI while it is idle: a click starts recording speech to turn into text."
+  },
+  "stopDictation": "Stop dictation",
+  "@stopDictation": {
+    "description": "The tooltip and accessible name of the dictation button while it records speech: a click stops recording."
+  },
+  "finishingDictation": "Finishing dictation",
+  "@finishingDictation": {
+    "description": "The tooltip and accessible name of the dictation button after recording stopped, while the speech service sends its last result."
+  },
+  "dictationUnavailable": "Dictation unavailable",
+  "@dictationUnavailable": {
+    "description": "The tooltip and accessible name of the dictation button, disabled, when no speech service can turn speech into text."
   }
 }

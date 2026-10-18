@@ -177,6 +177,11 @@ UI as they read other apps (see [Accessibility](accessibility.md)).
   documents or a language model's replies streaming in, selectable and
   copied as text or Markdown.
 
+## Speech
+
+- [Speech](speech.md): dictation, a session recording the microphone for
+  a speech service of your choice, with a button and a waveform.
+
 ## Dates and colors
 
 - [Calendar](calendar.md): a month choosing a day.

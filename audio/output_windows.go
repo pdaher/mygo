@@ -107,11 +107,15 @@ type wasapiDevice struct {
 	checked                    time.Time
 }
 
-// defaultID returns the endpoint ID of the default output.
-func defaultID(enumerator uintptr) (string, error) {
+// defaultID returns the endpoint ID of the default output (eRender) or
+// input (eCapture).
+func defaultID(enumerator, flow uintptr) (string, error) {
 	var dev uintptr
-	if hr := comCall(enumerator, 4, eRender, eConsole, uintptr(unsafe.Pointer(&dev))); failed(hr) {
+	if hr := comCall(enumerator, 4, flow, eConsole, uintptr(unsafe.Pointer(&dev))); failed(hr) {
 		if uint32(hr) == 0x80070490 { // E_NOTFOUND
+			if flow == eCapture {
+				return "", errNoInput
+			}
 			return "", errors.New("audio: no audio output")
 		}
 		return "", hresult("GetDefaultAudioEndpoint", hr)
@@ -158,7 +162,7 @@ func (d *wasapiDevice) open() error {
 		return hresult("GetDefaultAudioEndpoint", hr)
 	}
 	defer release(dev)
-	id, err := defaultID(d.enumerator)
+	id, err := defaultID(d.enumerator, eRender)
 	if err != nil {
 		return err
 	}
@@ -233,7 +237,7 @@ func (d *wasapiDevice) write(samples []float32) error {
 	// Settings) moves a shared stream nowhere: open the new one.
 	if time.Since(d.checked) > 500*time.Millisecond {
 		d.checked = time.Now()
-		if id, err := defaultID(d.enumerator); err != nil || id != d.id {
+		if id, err := defaultID(d.enumerator, eRender); err != nil || id != d.id {
 			return errDefaultDeviceChanged
 		}
 	}
