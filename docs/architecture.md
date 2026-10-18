@@ -124,7 +124,7 @@ framework safely. Read it before changing anything under `internal/`.
 │                       audio/vorbis and audio/mp3 decode Ogg Vorbis and MP3
 ├── cmd/mygo/           the CLI: init, generate, dev, build, doctor
 ├── examples/           hello, todo, frameless, native; counter-native, vibrancy,
-│                       effort-slider, flyout, menubar-flyout, piano, farm
+│                       effort-slider, flyout, menubar-flyout, piano, recorder, farm
 │                       and mayoi (games), code-editor and gallery (native
 │                       UI), timeline (motion on one playhead); webview (web
 │                       views in native UI); launcher (a Spotlight-like panel,

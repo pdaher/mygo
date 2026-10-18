@@ -161,6 +161,10 @@ Until the user answers, the recording gets nothing. Windows records
 nothing while its privacy settings deny apps the microphone, and browsers
 ask for the page.
 
+[examples/recorder](../examples/recorder) records a take, draws its
+waveform as it grows, and plays it back with `audio.NewSound`, with a
+playhead a click moves.
+
 For dictation, [package `ui/speech`](ui/speech.md) runs sessions on a
 recording, with a button and a waveform of native UI.
 

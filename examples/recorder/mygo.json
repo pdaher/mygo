@@ -1,0 +1,10 @@
+{
+  "name": "Recorder",
+  "identifier": "dev.mygo.recorder",
+  "version": "1.0.0",
+  "macos": {
+    "infoPlist": {
+      "NSMicrophoneUsageDescription": "Record takes to play back."
+    }
+  }
+}
